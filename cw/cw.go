@@ -101,7 +101,7 @@ func (r *Route) String() string {
 	return fmt.Sprintf("%v", r.Nodes)
 }
 
-func (graph *Graph) FindOptimalRoute() *Route {
+func (graph *Graph) FindOptimalRoute() []*Route {
 	numNodes := len(graph.Distance)
 
 	routes := make([]*Route, numNodes-1)
@@ -114,13 +114,14 @@ func (graph *Graph) FindOptimalRoute() *Route {
 	for i := 0; i < len(routes)-1; i++ {
 		for j := i + 1; j < len(routes); j++ {
 			savings := graph.CalculateSavings(routes[i], routes[j])
-			saves = append(saves, Save{i + 1, j + 1, savings})
+			if savings > 0 {
+				saves = append(saves, Save{i + 1, j + 1, savings})
+			}
 		}
 	}
 	sort.Slice(saves, func(i, j int) bool {
 		return saves[i].saveIng > saves[j].saveIng
 	})
-
 	for _, save := range saves {
 		if len(routes) == 1 {
 			break
@@ -140,9 +141,11 @@ func (graph *Graph) FindOptimalRoute() *Route {
 			}
 		}
 	}
-	routes[0].Nodes = append([]int{0}, routes[0].Nodes...)
-	routes[0].Nodes = append(routes[0].Nodes, 0)
-	return routes[0]
+	for i := range routes {
+		routes[i].Nodes = append([]int{0}, routes[i].Nodes...)
+		routes[i].Nodes = append(routes[i].Nodes, 0)
+	}
+	return routes
 }
 
 func (graph *Graph) CalculateSavings(route1, route2 *Route) float64 {
