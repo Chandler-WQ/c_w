@@ -101,7 +101,7 @@ func main() {
 			newGraph.AddEdge(i, j, length)
 		}
 	}
-	fmt.Println(newGraph.Distance)
+	// fmt.Println(newGraph.Distance)
 
 	cwGraph := cw.NewGraph(newGraph.Distance)
 	optimalRoutes := cwGraph.FindOptimalRoute()
